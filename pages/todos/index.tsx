@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Box,
   Container,
@@ -27,8 +28,8 @@ import RestoreFromTrashOutlinedIcon from "@mui/icons-material/RestoreFromTrashOu
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
-import { Header } from "../components/Header";
-import { db } from "../lib/firebase";
+import { Header } from "../../components/Header";
+import { db } from "../../lib/firebase";
 
 export default function todos() {
   const [status, setStatus] = useState("NONE");
@@ -216,7 +217,9 @@ export default function todos() {
                 },
               }}
             >
-              <OpenInNewIcon sx={icon} />
+              <Link href="/todos/create">
+                <OpenInNewIcon sx={icon} />
+              </Link>
             </Box>
           </Box>
         </Box>
