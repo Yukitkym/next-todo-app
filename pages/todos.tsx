@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Container,
@@ -28,55 +28,7 @@ import SaveAsIcon from "@mui/icons-material/SaveAs";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 import { Header } from "../components/Header";
-
-function createData(
-  task: string,
-  status: string,
-  priority: string,
-  create: string,
-  update: string
-) {
-  return { task, status, priority, create, update };
-}
-
-const rows = [
-  createData(
-    "Github上に静的サイトをホスティングする",
-    "NOT STARTED",
-    "High",
-    "2020-11-8 18:55",
-    "2020-11-8 18:55"
-  ),
-  createData(
-    "ReactでTodoサイトを作成する",
-    "DOING",
-    "Low",
-    "2020-11-8 18:56",
-    "2020-11-8 18:56"
-  ),
-  createData(
-    "Firestore Hostingを学習する",
-    "DONE",
-    "Middle",
-    "2020-11-8 18:57",
-    "2020-11-8 18:57"
-  ),
-  createData(
-    "感謝の正拳突き",
-    "DOING",
-    "High",
-    "2020-11-8 18:58",
-    "2020-11-8 18:58"
-  ),
-  createData(
-    "二重の極み",
-    "DONE",
-    "High",
-    "2020-11-8 18:59",
-    "2020-11-8 18:59"
-  ),
-  createData("魔封波", "DOING", "Low", "2020-11-8 19:00", "2020-11-8 19:00"),
-];
+import { db } from "../lib/firebase";
 
 export default function todos() {
   const [status, setStatus] = useState("NONE");
@@ -99,6 +51,24 @@ export default function todos() {
         return <DoneComponent>{status}</DoneComponent>;
     }
   };
+
+  const [todos, setTodos] = useState([
+    { id: "", task: "", status: "", priority: "" },
+  ]);
+  useEffect(() => {
+    const unSub = db.collection("todos").onSnapshot((snapshot) => {
+      setTodos(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          task: doc.data().task,
+          status: doc.data().status,
+          priority: doc.data().priority,
+        }))
+      );
+    });
+    return () => unSub();
+  }, []);
+
   return (
     <>
       <Header />
@@ -285,34 +255,14 @@ export default function todos() {
                     textAlign: "center",
                   }}
                 >
-                  Create
-                </TableCell>
-                <TableCell
-                  align="right"
-                  sx={{
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
-                  Update
-                </TableCell>
-                <TableCell
-                  align="right"
-                  sx={{
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
                   Action
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
+              {todos.map((todo) => (
                 <TableRow
-                  key={row.create}
+                  key={todo.id}
                   sx={{
                     "&:last-child td, &:last-child th": {
                       border: 0,
@@ -324,13 +274,13 @@ export default function todos() {
                     scope="row"
                     sx={{ fontSize: "18px", fontWeight: "bold" }}
                   >
-                    {row.task}
+                    {todo.task}
                   </TableCell>
-                  <TableCell align="right">{todoStatus(row.status)}</TableCell>
+                  <TableCell align="right">{todoStatus(todo.status)}</TableCell>
                   <TableCell align="right">
                     <FormControl fullWidth>
                       <Select
-                        value={row.priority}
+                        value={todo.priority}
                         sx={{
                           border: "2px solid #EC7272",
                           borderRadius: "15px",
@@ -343,12 +293,6 @@ export default function todos() {
                         <MenuItem value="High">High</MenuItem>
                       </Select>
                     </FormControl>
-                  </TableCell>
-                  <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    {row.create}
-                  </TableCell>
-                  <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    {row.update}
                   </TableCell>
                   <TableCell align="right">
                     <EditOutlinedIcon

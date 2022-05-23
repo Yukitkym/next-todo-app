@@ -1,9 +1,16 @@
 import type { NextPage } from "next";
+import Link from "next/link";
+
+import { Header } from "../components/Header";
 
 const Home: NextPage = () => {
   return (
     <>
-      <h1>Todo List</h1>
+      <Header />
+      <h1>Todo Listページ</h1>
+      <Link href="/todos">
+        <a>Todo Listはこちら</a>
+      </Link>
     </>
   );
 };
