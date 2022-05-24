@@ -16,7 +16,7 @@ import { db } from "../../../lib/firebase";
 
 export default function todoEdit() {
   const router = useRouter();
-  const taskId = router.query.id;
+  const taskId = typeof router.query.id !== "object" ? router.query.id : "";
   const [task, setTask] = useState("");
   const [detail, setDetail] = useState("");
 
