@@ -31,6 +31,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  updateDoc,
 } from "firebase/firestore";
 
 import { Header } from "../../components/Header";
@@ -46,17 +47,6 @@ export default function todos() {
   };
   const priorityChange = (event: SelectChangeEvent) => {
     setPriority(event.target.value as string);
-  };
-
-  const todoStatus = (status: string) => {
-    switch (status) {
-      case "NOT STARTED":
-        return <NotStartedComponent>{status}</NotStartedComponent>;
-      case "DOING":
-        return <DoingComponent>{status}</DoingComponent>;
-      case "DONE":
-        return <DoneComponent>{status}</DoneComponent>;
-    }
   };
 
   const [todos, setTodos] = useState([
@@ -90,6 +80,20 @@ export default function todos() {
   const deleteTodo = (e: any) => {
     const todoId = e.target.parentNode.parentNode.id;
     deleteDoc(doc(db, "todos", todoId));
+  };
+  const changeStatus = (e: any) => {
+    const status = e.target.value;
+    let todoId = "";
+    if (status.match("NOT STARTED")) {
+      todoId = status.slice(12);
+    } else if (status.match("DOING")) {
+      todoId = status.slice(6);
+    } else {
+      todoId = status.slice(5);
+    }
+    updateDoc(doc(db, "todos", todoId), {
+      status: status,
+    });
   };
   return (
     <>
@@ -188,7 +192,7 @@ export default function todos() {
               marginBottom: "8px",
             }}
           >
-            <ResetBtn sx={{}}>RESET</ResetBtn>
+            <ResetBtn>RESET</ResetBtn>
           </Box>
           <Box
             sx={{
@@ -286,23 +290,28 @@ export default function todos() {
                   >
                     <Link href={`/todos/${todo.id}`}>{todo.task}</Link>
                   </TableCell>
-                  <TableCell align="right">{todoStatus(todo.status)}</TableCell>
                   <TableCell align="right">
                     <FormControl fullWidth>
                       <Select
-                        value={todo.priority}
+                        value={todo.status}
+                        onChange={changeStatus}
                         sx={{
-                          border: "2px solid #EC7272",
+                          border: "2px solid gray",
                           borderRadius: "15px",
                           textAlign: "left",
                           height: "50px",
                         }}
                       >
-                        <MenuItem value="Low">Low</MenuItem>
-                        <MenuItem value="Middle">Middle</MenuItem>
-                        <MenuItem value="High">High</MenuItem>
+                        <MenuItem value={`NOT STARTED-${todo.id}`}>
+                          NOT STARTED
+                        </MenuItem>
+                        <MenuItem value={`DOING-${todo.id}`}>DOING</MenuItem>
+                        <MenuItem value={`DONE-${todo.id}`}>DONE</MenuItem>
                       </Select>
                     </FormControl>
+                  </TableCell>
+                  <TableCell align="right" sx={{ fontSize: "20px" }}>
+                    {todo.priority}
                   </TableCell>
                   <TableCell align="right" sx={{ fontWeight: "bold" }}>
                     {todo.createdAt}
@@ -358,42 +367,6 @@ const ResetBtn = styled("button")({
     background: "#858585",
     color: "white",
   },
-});
-
-const NotStartedComponent = styled("div")({
-  boxSizing: "border-box",
-  background: "#F0FFF4",
-  border: "1px solid rgba(0, 0, 0, 0.8)",
-  borderRadius: "50px",
-  color: "black",
-  fontSize: "12px",
-  fontWeight: "bold",
-  textAlign: "center",
-  padding: "14px 0px",
-});
-
-const DoingComponent = styled("div")({
-  boxSizing: "border-box",
-  background: "#25855A",
-  border: "1px solid rgba(0, 0, 0, 0.8)",
-  borderRadius: "50px",
-  color: "white",
-  fontSize: "16px",
-  fontWeight: "bold",
-  textAlign: "center",
-  padding: "10px",
-});
-
-const DoneComponent = styled("div")({
-  boxSizing: "border-box",
-  background: "#68D391",
-  border: "1px solid rgba(0, 0, 0, 0.8)",
-  borderRadius: "50px",
-  color: "black",
-  fontSize: "16px",
-  fontWeight: "bold",
-  textAlign: "center",
-  padding: "10px",
 });
 
 const icon = {
