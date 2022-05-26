@@ -9,6 +9,10 @@ import {
   Box,
   Stack,
   styled,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 
@@ -24,6 +28,7 @@ export default function todoEdit() {
       : "";
   const [task, setTask] = useState("");
   const [detail, setDetail] = useState("");
+  const [priority, setPriority] = useState("");
 
   useEffect(() => {
     if (router.isReady) {
@@ -34,6 +39,7 @@ export default function todoEdit() {
           if (docSnap.exists()) {
             setTask(docSnap.get("task"));
             setDetail(docSnap.get("detail"));
+            setPriority(docSnap.get("priority"));
           } else {
             console.log("No such document!");
           }
@@ -50,6 +56,7 @@ export default function todoEdit() {
     updateDoc(doc(db, "todos", taskId), {
       task: task,
       detail: detail,
+      priority: priority,
       updatedAt: serverTimestamp(),
     });
     router.replace(`/todos/${taskId}`);
@@ -114,6 +121,33 @@ export default function todoEdit() {
                   }}
                 />
               </FormLabel>
+              <FormControl>
+                <FormLabel id="priority">PRIORITY</FormLabel>
+                <RadioGroup
+                  row
+                  aria-labelledby="priority"
+                  defaultValue="priority"
+                  name="priority"
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                >
+                  <FormControlLabel
+                    value="High"
+                    control={<Radio />}
+                    label="High"
+                  />
+                  <FormControlLabel
+                    value="Middle"
+                    control={<Radio />}
+                    label="Middle"
+                  />
+                  <FormControlLabel
+                    value="Low"
+                    control={<Radio />}
+                    label="Low"
+                  />
+                </RadioGroup>
+              </FormControl>
               <Box
                 component="div"
                 sx={{ display: "flex", justifyContent: "space-between" }}

@@ -30,6 +30,7 @@ export default function todoIndex() {
       : "";
   const [task, setTask] = useState("");
   const [detail, setDetail] = useState("");
+  const [priority, setPriority] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [updatedAt, setUpdatedAt] = useState("");
 
@@ -42,6 +43,7 @@ export default function todoIndex() {
           if (docSnap.exists()) {
             setTask(docSnap.get("task"));
             setDetail(docSnap.get("detail"));
+            setPriority(docSnap.get("priority"));
             setCreatedAt(dateFormat(docSnap.get("createdAt")));
             setUpdatedAt(dateFormat(docSnap.get("updatedAt")));
           } else {
@@ -188,6 +190,14 @@ export default function todoIndex() {
                       <EditIcon />
                     </Button>
                   </Link>
+                  <Box sx={{ mr: 10, mt: 1.5, mb: 2 }}>
+                    <Typography sx={{ fontWeight: "bold", fontSize: 18 }}>
+                      Priority
+                    </Typography>
+                    <Typography sx={{ fontWeight: "bold", fontSize: 23 }}>
+                      {priority}
+                    </Typography>
+                  </Box>
                   <Box sx={{ mr: 10, mt: 1.5, mb: 2 }}>
                     <Typography sx={{ fontWeight: "bold", fontSize: 18 }}>
                       Create
