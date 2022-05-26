@@ -7,10 +7,10 @@ const Home: NextPage = () => {
   return (
     <>
       <Header />
-      <h1>Todo Listページ</h1>
-      <Link href="/todos">
-        <a>Todo Listはこちら</a>
-      </Link>
+      <h1>Todoアプリです</h1>
+      <p>
+        <Link href="/todos">Todo Listはこちら</Link>
+      </p>
     </>
   );
 };

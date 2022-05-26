@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 
@@ -17,7 +18,7 @@ export const Header = () => {
           component="h1"
           style={{ fontSize: "48px", marginLeft: "60px" }}
         >
-          TODO
+          <Link href="/todos">TODO</Link>
         </Typography>
       </Box>
     </>

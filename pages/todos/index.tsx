@@ -92,6 +92,7 @@ export default function todos() {
           "& .MuiOutlinedInput-notchedOutline": {
             border: "none",
           },
+          marginBottom: "30px",
         }}
       >
         <CssBaseline />
@@ -181,59 +182,23 @@ export default function todos() {
           >
             <ResetBtn sx={{}}>RESET</ResetBtn>
           </Box>
-          <Box sx={{ display: "flex" }}>
-            <Box
-              mr={2}
-              sx={{
-                background: "#F6E05E",
-                border: "8px solid #F6E05E",
-                borderRadius: "30px",
-                height: "50px",
-                width: "50px",
-                "&:hover": {
-                  background: "#ccb94e",
-                  borderColor: "#ccb94e",
-                  color: "white",
-                },
-              }}
-            >
-              <RestoreFromTrashOutlinedIcon sx={icon} />
-            </Box>
-            <Box
-              mr={2}
-              sx={{
-                background: "#FED7E2",
-                border: "8px solid #FED7E2",
-                borderRadius: "30px",
-                height: "50px",
-                width: "50px",
-                "&:hover": {
-                  background: "#d4b2bb",
-                  borderColor: "#d4b2bb",
-                  color: "white",
-                },
-              }}
-            >
-              <SaveAsIcon sx={icon} />
-            </Box>
-            <Box
-              sx={{
-                background: "#68D391",
-                border: "8px solid #68D391",
-                borderRadius: "30px",
-                height: "50px",
-                width: "50px",
-                "&:hover": {
-                  background: "#55ab76",
-                  borderColor: "#55ab76",
-                  color: "white",
-                },
-              }}
-            >
-              <Link href="/todos/create">
-                <OpenInNewIcon sx={icon} />
-              </Link>
-            </Box>
+          <Box
+            sx={{
+              background: "#68D391",
+              border: "8px solid #68D391",
+              borderRadius: "30px",
+              height: "50px",
+              width: "50px",
+              "&:hover": {
+                background: "#55ab76",
+                borderColor: "#55ab76",
+                color: "white",
+              },
+            }}
+          >
+            <Link href="/todos/create">
+              <OpenInNewIcon sx={icon} />
+            </Link>
           </Box>
         </Box>
         <TableContainer component={Paper}>
@@ -310,7 +275,7 @@ export default function todos() {
                     scope="row"
                     sx={{ fontSize: "18px", fontWeight: "bold" }}
                   >
-                    {todo.task}
+                    <Link href={`/todos/${todo.id}`}>{todo.task}</Link>
                   </TableCell>
                   <TableCell align="right">{todoStatus(todo.status)}</TableCell>
                   <TableCell align="right">
@@ -337,40 +302,35 @@ export default function todos() {
                     {todo.updatedAt}
                   </TableCell>
                   <TableCell align="right">
-                    <EditOutlinedIcon
-                      sx={{
-                        borderRadius: "8px",
-                        marginRight: "10px",
-                        "&:hover": {
-                          background: "gray",
-                          color: "white",
-                        },
-                      }}
-                    />
-                    <DeleteOutlineOutlinedIcon
-                      sx={{
-                        borderRadius: "8px",
-                        "&:hover": {
-                          background: "gray",
-                          color: "white",
-                        },
-                      }}
-                    />
+                    <Link href={`/todos/${todo.id}/edit`}>
+                      <EditOutlinedIcon
+                        sx={{
+                          borderRadius: "8px",
+                          marginRight: "10px",
+                          "&:hover": {
+                            background: "gray",
+                            color: "white",
+                          },
+                        }}
+                      />
+                    </Link>
+                    <Link href={`/todos/${todo.id}/edit`}>
+                      <DeleteOutlineOutlinedIcon
+                        sx={{
+                          borderRadius: "8px",
+                          "&:hover": {
+                            background: "gray",
+                            color: "white",
+                          },
+                        }}
+                      />
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
-        <Box mt={6} mb={3} sx={{ textAlign: "center" }}>
-          <Pagination
-            count={10}
-            size="large"
-            variant="outlined"
-            shape="rounded"
-            sx={{ display: "inline-block" }}
-          />
-        </Box>
       </Container>
     </>
   );
