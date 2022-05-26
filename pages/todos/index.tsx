@@ -8,7 +8,6 @@ import {
   IconButton,
   InputBase,
   MenuItem,
-  Pagination,
   Paper,
   Select,
   SelectChangeEvent,
@@ -24,10 +23,15 @@ import { styled } from "@mui/system";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import SearchIcon from "@mui/icons-material/Search";
-import RestoreFromTrashOutlinedIcon from "@mui/icons-material/RestoreFromTrashOutlined";
-import SaveAsIcon from "@mui/icons-material/SaveAs";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 
 import { Header } from "../../components/Header";
 import { db } from "../../lib/firebase";
@@ -83,6 +87,10 @@ export default function todos() {
     return () => unSub();
   }, []);
 
+  const deleteTodo = (e: any) => {
+    const todoId = e.target.parentNode.parentNode.id;
+    deleteDoc(doc(db, "todos", todoId));
+  };
   return (
     <>
       <Header />
@@ -264,6 +272,7 @@ export default function todos() {
               {todos.map((todo) => (
                 <TableRow
                   key={todo.id}
+                  id={todo.id}
                   sx={{
                     "&:last-child td, &:last-child th": {
                       border: 0,
@@ -314,17 +323,16 @@ export default function todos() {
                         }}
                       />
                     </Link>
-                    <Link href={`/todos/${todo.id}/edit`}>
-                      <DeleteOutlineOutlinedIcon
-                        sx={{
-                          borderRadius: "8px",
-                          "&:hover": {
-                            background: "gray",
-                            color: "white",
-                          },
-                        }}
-                      />
-                    </Link>
+                    <DeleteOutlineOutlinedIcon
+                      sx={{
+                        borderRadius: "8px",
+                        "&:hover": {
+                          background: "gray",
+                          color: "white",
+                        },
+                      }}
+                      onClick={deleteTodo}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
