@@ -39,14 +39,29 @@ import { db } from "../../lib/firebase";
 import { dateFormat } from "../../components/DateFormat";
 
 export default function todos() {
-  const [status, setStatus] = useState("NONE");
-  const [priority, setPriority] = useState("None");
+  const [searchTask, setSearchTask] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [searchStatus, setSearchStatus] = useState("NONE");
+  const [searchPriority, setSearchPriority] = useState("None");
 
-  const statusChange = (event: SelectChangeEvent) => {
-    setStatus(event.target.value as string);
+  const searchTextChange = (event: any) => {
+    setSearchText(event.target.value as string);
   };
-  const priorityChange = (event: SelectChangeEvent) => {
-    setPriority(event.target.value as string);
+  const searchStatusChange = (event: SelectChangeEvent) => {
+    setSearchStatus(event.target.value as string);
+  };
+  const searchPriorityChange = (event: SelectChangeEvent) => {
+    setSearchPriority(event.target.value as string);
+  };
+  const searchTextClick = (event: any) => {
+    event.preventDefault();
+    setSearchTask(searchText);
+  };
+  const resetClick = (event: any) => {
+    setSearchTask("");
+    setSearchText("");
+    setSearchStatus("NONE");
+    setSearchPriority("None");
   };
 
   const [todos, setTodos] = useState([
@@ -137,8 +152,15 @@ export default function todos() {
                 sx={{ ml: 1, flex: 1, fontWeight: "bold" }}
                 placeholder="Text"
                 inputProps={{ "aria-label": "search todo text" }}
+                value={searchText}
+                onChange={searchTextChange}
               />
-              <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
+              <IconButton
+                type="submit"
+                sx={{ p: "10px" }}
+                aria-label="search"
+                onClick={searchTextClick}
+              >
                 <SearchIcon />
               </IconButton>
             </Paper>
@@ -155,7 +177,7 @@ export default function todos() {
                 height: "50px",
               }}
             >
-              <Select value={status} onChange={statusChange}>
+              <Select value={searchStatus} onChange={searchStatusChange}>
                 <MenuItem value="NONE">- - - - - - -</MenuItem>
                 <MenuItem value="NOT STARTED">NOT STARTED</MenuItem>
                 <MenuItem value="DOING">DOING</MenuItem>
@@ -175,7 +197,7 @@ export default function todos() {
                 height: "50px",
               }}
             >
-              <Select value={priority} onChange={priorityChange}>
+              <Select value={searchPriority} onChange={searchPriorityChange}>
                 <MenuItem value="None">- - - - - - -</MenuItem>
                 <MenuItem value="Low">Low</MenuItem>
                 <MenuItem value="Middle">Middle</MenuItem>
@@ -192,7 +214,7 @@ export default function todos() {
               marginBottom: "8px",
             }}
           >
-            <ResetBtn>RESET</ResetBtn>
+            <ResetBtn onClick={resetClick}>RESET</ResetBtn>
           </Box>
           <Box
             sx={{
@@ -273,78 +295,90 @@ export default function todos() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {todos.map((todo) => (
-                <TableRow
-                  key={todo.id}
-                  id={todo.id}
-                  sx={{
-                    "&:last-child td, &:last-child th": {
-                      border: 0,
-                    },
-                  }}
-                >
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    sx={{ fontSize: "18px", fontWeight: "bold" }}
-                  >
-                    <Link href={`/todos/${todo.id}`}>{todo.task}</Link>
-                  </TableCell>
-                  <TableCell align="right">
-                    <FormControl fullWidth>
-                      <Select
-                        value={todo.status}
-                        onChange={changeStatus}
-                        sx={{
-                          border: "2px solid gray",
-                          borderRadius: "15px",
-                          textAlign: "left",
-                          height: "50px",
-                        }}
-                      >
-                        <MenuItem value={`NOT STARTED-${todo.id}`}>
-                          NOT STARTED
-                        </MenuItem>
-                        <MenuItem value={`DOING-${todo.id}`}>DOING</MenuItem>
-                        <MenuItem value={`DONE-${todo.id}`}>DONE</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </TableCell>
-                  <TableCell align="right" sx={{ fontSize: "20px" }}>
-                    {todo.priority}
-                  </TableCell>
-                  <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    {todo.createdAt}
-                  </TableCell>
-                  <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    {todo.updatedAt}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Link href={`/todos/${todo.id}/edit`}>
-                      <EditOutlinedIcon
-                        sx={{
-                          borderRadius: "8px",
-                          marginRight: "10px",
-                          "&:hover": {
-                            background: "gray",
-                            color: "white",
-                          },
-                        }}
-                      />
-                    </Link>
-                    <DeleteOutlineOutlinedIcon
+              {todos.map((todo) => {
+                if (
+                  todo.task.match(searchTask) &&
+                  (todo.status.match(searchStatus) ||
+                    searchStatus === "NONE") &&
+                  (searchPriority === todo.priority ||
+                    searchPriority === "None")
+                ) {
+                  return (
+                    <TableRow
+                      key={todo.id}
+                      id={todo.id}
                       sx={{
-                        borderRadius: "8px",
-                        "&:hover": {
-                          background: "gray",
-                          color: "white",
+                        "&:last-child td, &:last-child th": {
+                          border: 0,
                         },
                       }}
-                      onClick={deleteTodo}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
+                    >
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        sx={{ fontSize: "18px", fontWeight: "bold" }}
+                      >
+                        <Link href={`/todos/${todo.id}`}>{todo.task}</Link>
+                      </TableCell>
+                      <TableCell align="right">
+                        <FormControl fullWidth>
+                          <Select
+                            value={todo.status}
+                            onChange={changeStatus}
+                            sx={{
+                              border: "2px solid gray",
+                              borderRadius: "15px",
+                              textAlign: "left",
+                              height: "50px",
+                            }}
+                          >
+                            <MenuItem value={`NOT STARTED-${todo.id}`}>
+                              NOT STARTED
+                            </MenuItem>
+                            <MenuItem value={`DOING-${todo.id}`}>
+                              DOING
+                            </MenuItem>
+                            <MenuItem value={`DONE-${todo.id}`}>DONE</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </TableCell>
+                      <TableCell align="right" sx={{ fontSize: "20px" }}>
+                        {todo.priority}
+                      </TableCell>
+                      <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                        {todo.createdAt}
+                      </TableCell>
+                      <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                        {todo.updatedAt}
+                      </TableCell>
+                      <TableCell align="right">
+                        <Link href={`/todos/${todo.id}/edit`}>
+                          <EditOutlinedIcon
+                            sx={{
+                              borderRadius: "8px",
+                              marginRight: "10px",
+                              "&:hover": {
+                                background: "gray",
+                                color: "white",
+                              },
+                            }}
+                          />
+                        </Link>
+                        <DeleteOutlineOutlinedIcon
+                          sx={{
+                            borderRadius: "8px",
+                            "&:hover": {
+                              background: "gray",
+                              color: "white",
+                            },
+                          }}
+                          onClick={deleteTodo}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                }
+              })}
             </TableBody>
           </Table>
         </TableContainer>
