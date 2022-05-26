@@ -15,25 +15,35 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import Container from "@mui/material/Container";
+import { doc, getDoc } from "firebase/firestore";
 
 import { Header } from "../../../components/Header";
 import { db } from "../../../lib/firebase";
+import { dateFormat } from "../../../components/DateFormat";
 
 export default function todoIndex() {
   const router = useRouter();
-  const taskId = router.query.id;
+  const taskId: string =
+    typeof router.query.id !== "object" &&
+    typeof router.query.id !== "undefined"
+      ? router.query.id
+      : "";
   const [task, setTask] = useState("");
   const [detail, setDetail] = useState("");
+  const [createdAt, setCreatedAt] = useState("");
+  const [updatedAt, setUpdatedAt] = useState("");
 
   useEffect(() => {
     if (router.isReady) {
       const accessDb = async () => {
         try {
-          const todosDb = db.collection("todos").doc(taskId);
-          const todoDoc = await todosDb.get();
-          if (todoDoc.exists) {
-            setTask(todoDoc.get("task"));
-            setDetail(todoDoc.get("detail"));
+          const docRef = await doc(db, "todos", taskId);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setTask(docSnap.get("task"));
+            setDetail(docSnap.get("detail"));
+            setCreatedAt(dateFormat(docSnap.get("createdAt")));
+            setUpdatedAt(dateFormat(docSnap.get("updatedAt")));
           } else {
             console.log("No such document!");
           }
@@ -178,6 +188,22 @@ export default function todoIndex() {
                       <EditIcon />
                     </Button>
                   </Link>
+                  <Box sx={{ mr: 10, mt: 1.5, mb: 2 }}>
+                    <Typography sx={{ fontWeight: "bold", fontSize: 18 }}>
+                      Create
+                    </Typography>
+                    <Typography sx={{ fontWeight: "bold", fontSize: 23 }}>
+                      {createdAt}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ mt: 1.5, mb: 2 }}>
+                    <Typography sx={{ fontWeight: "bold", fontSize: 18 }}>
+                      Update
+                    </Typography>
+                    <Typography sx={{ fontWeight: "bold", fontSize: 23 }}>
+                      {updatedAt}
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
             </Box>

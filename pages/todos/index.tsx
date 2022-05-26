@@ -27,9 +27,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import RestoreFromTrashOutlinedIcon from "@mui/icons-material/RestoreFromTrashOutlined";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 
 import { Header } from "../../components/Header";
 import { db } from "../../lib/firebase";
+import { dateFormat } from "../../components/DateFormat";
 
 export default function todos() {
   const [status, setStatus] = useState("NONE");
@@ -54,19 +56,30 @@ export default function todos() {
   };
 
   const [todos, setTodos] = useState([
-    { id: "", task: "", status: "", priority: "" },
+    {
+      id: "",
+      task: "",
+      status: "",
+      priority: "",
+      createdAt: "",
+      updatedAt: "",
+    },
   ]);
+  const q = query(collection(db, "todos"), orderBy("createdAt"));
   useEffect(() => {
-    const unSub = db.collection("todos").onSnapshot((snapshot) => {
+    const unSub = onSnapshot(q, (querySnapshot) => {
       setTodos(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          task: doc.data().task,
-          status: doc.data().status,
-          priority: doc.data().priority,
+        querySnapshot.docs.map((todo) => ({
+          id: todo.id,
+          task: todo.data().task,
+          status: todo.data().status,
+          priority: todo.data().priority,
+          createdAt: dateFormat(todo.data().createdAt),
+          updatedAt: dateFormat(todo.data().updatedAt),
         }))
       );
     });
+
     return () => unSub();
   }, []);
 
@@ -258,6 +271,26 @@ export default function todos() {
                     textAlign: "center",
                   }}
                 >
+                  Create
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{
+                    fontSize: "24px",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  Update
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{
+                    fontSize: "24px",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
                   Action
                 </TableCell>
               </TableRow>
@@ -296,6 +329,12 @@ export default function todos() {
                         <MenuItem value="High">High</MenuItem>
                       </Select>
                     </FormControl>
+                  </TableCell>
+                  <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                    {todo.createdAt}
+                  </TableCell>
+                  <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                    {todo.updatedAt}
                   </TableCell>
                   <TableCell align="right">
                     <EditOutlinedIcon

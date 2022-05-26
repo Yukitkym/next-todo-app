@@ -10,13 +10,18 @@ import {
   Stack,
   styled,
 } from "@mui/material";
+import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 
 import { Header } from "../../../components/Header";
 import { db } from "../../../lib/firebase";
 
 export default function todoEdit() {
   const router = useRouter();
-  const taskId = typeof router.query.id !== "object" ? router.query.id : "";
+  const taskId =
+    typeof router.query.id !== "object" &&
+    typeof router.query.id !== "undefined"
+      ? router.query.id
+      : "";
   const [task, setTask] = useState("");
   const [detail, setDetail] = useState("");
 
@@ -24,11 +29,11 @@ export default function todoEdit() {
     if (router.isReady) {
       const accessDb = async () => {
         try {
-          const todosDb = db.collection("todos").doc(taskId);
-          const todoDoc = await todosDb.get();
-          if (todoDoc.exists) {
-            setTask(todoDoc.get("task"));
-            setDetail(todoDoc.get("detail"));
+          const docRef = await doc(db, "todos", taskId);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setTask(docSnap.get("task"));
+            setDetail(docSnap.get("detail"));
           } else {
             console.log("No such document!");
           }
@@ -42,9 +47,12 @@ export default function todoEdit() {
 
   const editTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    db.collection("todos")
-      .doc(taskId)
-      .set({ task: task, detail: detail }, { merge: true });
+    updateDoc(doc(db, "todos", taskId), {
+      task: task,
+      detail: detail,
+      updatedAt: serverTimestamp(),
+    });
+    router.replace(`/todos/${taskId}`);
   };
 
   return (

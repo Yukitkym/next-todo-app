@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 import { TextareaAutosize } from "@material-ui/core";
 import {
   Box,
@@ -12,24 +13,27 @@ import {
   RadioGroup,
   Typography,
 } from "@mui/material";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 import { Header } from "../../components/Header";
 import { db } from "../../lib/firebase";
-import { useRouter } from "next/router";
 
 export default function create() {
   const [task, setTask] = useState("");
   const [detail, setDetail] = useState("");
   const [priority, setPriority] = useState("Middle");
   const router = useRouter();
+  const colRef = collection(db, "todos");
 
   const newTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    db.collection("todos").add({
+    addDoc(colRef, {
       task: task,
       detail: detail,
       priority: priority,
       status: "NOT STARTED",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     });
     router.replace("/todos");
   };
