@@ -17,6 +17,7 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 import { Header } from "../../components/Header";
 import { db } from "../../lib/firebase";
+import { useUser } from "../../lib/auth";
 
 export default function create() {
   const [task, setTask] = useState("");
@@ -24,16 +25,18 @@ export default function create() {
   const [priority, setPriority] = useState("Middle");
   const router = useRouter();
   const colRef = collection(db, "todos");
+  const user = useUser() !== null ? useUser()!.email : "";
 
-  const newTask = (e: React.FormEvent<HTMLFormElement>) => {
+  const newTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    addDoc(colRef, {
+    await addDoc(colRef, {
       task: task,
       detail: detail,
       priority: priority,
       status: "NOT STARTED",
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
+      user: user,
     });
     router.replace("/todos");
   };

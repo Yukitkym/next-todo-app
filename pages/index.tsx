@@ -18,19 +18,20 @@ const Home: NextPage = () => {
   return (
     <>
       <Header />
-      <h1>Todoアプリです</h1>
-      <p>
-        <Link href="/todos">Todo Listはこちら</Link>
-      </p>
+      <h1>Todoアプリ</h1>
+
       <div>
         {user !== null ? (
           <>
-            <h2>ログインしている</h2>
+            <p>現在、ログインをしています</p>
+            <h2>
+              <Link href="/todos">Todo Listへ飛ぶ</Link>
+            </h2>
             <button onClick={handleLogout}>ログアウト</button>
           </>
         ) : (
           <>
-            <h2>ログインしていない</h2>
+            <h2>ログインをしてください</h2>
             <button onClick={handleLogin}>ログイン</button>
           </>
         )}
