@@ -41,9 +41,10 @@ import { dateFormat } from "../../components/DateFormat";
 import { useUser } from "../../lib/auth";
 import { useRouter } from "next/router";
 
-export default function todos() {
+export default function Todos() {
   const router = useRouter();
-  const user = useUser() !== null ? useUser()!.email : "";
+  const user = useUser();
+  const userEmail = user !== null ? user.email : "";
   const [searchTask, setSearchTask] = useState("");
   const [searchText, setSearchText] = useState("");
   const [searchStatus, setSearchStatus] = useState("NONE");
@@ -121,11 +122,10 @@ export default function todos() {
       status: status,
     });
   };
-  console.log(user);
 
   return (
     <>
-      {user !== "" ? (
+      {userEmail !== "" ? (
         <>
           <Header />
           <Container
@@ -334,7 +334,7 @@ export default function todos() {
                 <TableBody>
                   {todos.map((todo) => {
                     if (
-                      user === todo.user &&
+                      userEmail === todo.user &&
                       todo.task.match(searchTask) &&
                       (todo.status.match(searchStatus) ||
                         searchStatus === "NONE") &&

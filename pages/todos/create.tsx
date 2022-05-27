@@ -19,13 +19,14 @@ import { Header } from "../../components/Header";
 import { db } from "../../lib/firebase";
 import { useUser } from "../../lib/auth";
 
-export default function create() {
+export default function Create() {
   const [task, setTask] = useState("");
   const [detail, setDetail] = useState("");
   const [priority, setPriority] = useState("Middle");
   const router = useRouter();
   const colRef = collection(db, "todos");
-  const user = useUser() !== null ? useUser()!.email : "";
+  const user = useUser();
+  const userEmail = user !== null ? user.email : "";
 
   const newTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,7 +37,7 @@ export default function create() {
       status: "NOT STARTED",
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
-      user: user,
+      user: userEmail,
     });
     router.replace("/todos");
   };

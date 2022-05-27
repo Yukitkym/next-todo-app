@@ -21,7 +21,7 @@ import { Header } from "../../../components/Header";
 import { db } from "../../../lib/firebase";
 import { dateFormat } from "../../../components/DateFormat";
 
-export default function todoIndex() {
+export default function TodoIndex() {
   const router = useRouter();
   const taskId: string =
     typeof router.query.id !== "object" &&

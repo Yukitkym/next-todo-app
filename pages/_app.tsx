@@ -13,7 +13,7 @@ const Auth = ({ children }: Props): JSX.Element => {
   return isLoading ? <p>Loading...</p> : children;
 };
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: any) {
   return (
     <RecoilRoot>
       <Auth>

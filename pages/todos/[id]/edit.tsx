@@ -19,7 +19,7 @@ import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { Header } from "../../../components/Header";
 import { db } from "../../../lib/firebase";
 
-export default function todoEdit() {
+export default function TodoEdit() {
   const router = useRouter();
   const taskId =
     typeof router.query.id !== "object" &&
