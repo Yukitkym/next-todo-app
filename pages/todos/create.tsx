@@ -155,24 +155,6 @@ export default function Create() {
                 sx={{
                   mt: 3,
                   mb: 2,
-                  color: "#333333",
-                  background: "#fce2ea",
-                  "&:hover": {
-                    background: "#ffefd5",
-                    opacity: [0.9, 0.8, 0.7],
-                  },
-                  borderRadius: 25,
-                  marginRight: 2,
-                }}
-              >
-                DRAFT
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  mt: 3,
-                  mb: 2,
                   background: "#26855A",
                   "&:hover": {
                     background: "#2bb32b",
