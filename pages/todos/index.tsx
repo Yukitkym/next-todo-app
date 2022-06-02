@@ -110,17 +110,9 @@ export default function Todos() {
     const todoId = e.target.parentNode.parentNode.id;
     deleteDoc(doc(db, "todos", todoId));
   };
-  const changeStatus = (e: SelectChangeEvent) => {
+  const changeStatus = (e: SelectChangeEvent, id: string) => {
     const status = e.target.value;
-    let todoId = "";
-    if (status.match("NOT STARTED")) {
-      todoId = status.slice(12);
-    } else if (status.match("DOING")) {
-      todoId = status.slice(6);
-    } else {
-      todoId = status.slice(5);
-    }
-    updateDoc(doc(db, "todos", todoId), {
+    updateDoc(doc(db, "todos", id), {
       status: status,
     });
   };
@@ -364,7 +356,7 @@ export default function Todos() {
                             <FormControl fullWidth>
                               <Select
                                 value={todo.status}
-                                onChange={changeStatus}
+                                onChange={(e: any) => changeStatus(e, todo.id)}
                                 sx={{
                                   border: "2px solid gray",
                                   borderRadius: "15px",
@@ -372,22 +364,11 @@ export default function Todos() {
                                   height: "50px",
                                 }}
                               >
-                                {todo.status === "NOT STARTED" ? (
-                                  <MenuItem value="NOT STARTED">
-                                    NOT STARTED
-                                  </MenuItem>
-                                ) : (
-                                  <MenuItem value={`NOT STARTED-${todo.id}`}>
-                                    NOT STARTED
-                                  </MenuItem>
-                                )}
-
-                                <MenuItem value={`DOING-${todo.id}`}>
-                                  DOING
+                                <MenuItem value="NOT STARTED">
+                                  NOT STARTED
                                 </MenuItem>
-                                <MenuItem value={`DONE-${todo.id}`}>
-                                  DONE
-                                </MenuItem>
+                                <MenuItem value="DOING">DOING</MenuItem>
+                                <MenuItem value="DONE">DONE</MenuItem>
                               </Select>
                             </FormControl>
                           </TableCell>
