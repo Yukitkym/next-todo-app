@@ -15,9 +15,9 @@ import {
 } from "@mui/material";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
-import { Header } from "../../components/Header";
-import { db } from "../../lib/firebase";
-import { useUser } from "../../lib/auth";
+import { Header } from "components/Header";
+import { db } from "lib/firebase";
+import { useUser } from "lib/auth";
 
 export default function Create() {
   const [task, setTask] = useState("");

@@ -16,8 +16,8 @@ import {
 } from "@mui/material";
 import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 
-import { Header } from "../../../components/Header";
-import { db } from "../../../lib/firebase";
+import { Header } from "components/Header";
+import { db } from "lib/firebase";
 
 export default function TodoEdit() {
   const router = useRouter();
@@ -29,12 +29,13 @@ export default function TodoEdit() {
   const [task, setTask] = useState("");
   const [detail, setDetail] = useState("");
   const [priority, setPriority] = useState("");
+  const radioOption = ["High", "Middle", "Low"];
 
   useEffect(() => {
     if (router.isReady) {
       const accessDb = async () => {
         try {
-          const docRef = await doc(db, "todos", taskId);
+          const docRef = doc(db, "todos", taskId);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             setTask(docSnap.get("task"));
@@ -59,7 +60,7 @@ export default function TodoEdit() {
       priority: priority,
       updatedAt: serverTimestamp(),
     });
-    router.replace(`/todos/${taskId}`);
+    router.push(`/todos/${taskId}`);
   };
 
   return (
@@ -131,21 +132,13 @@ export default function TodoEdit() {
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
                 >
-                  <FormControlLabel
-                    value="High"
-                    control={<Radio />}
-                    label="High"
-                  />
-                  <FormControlLabel
-                    value="Middle"
-                    control={<Radio />}
-                    label="Middle"
-                  />
-                  <FormControlLabel
-                    value="Low"
-                    control={<Radio />}
-                    label="Low"
-                  />
+                  {radioOption.map((status) => (
+                    <FormControlLabel
+                      value={status}
+                      control={<Radio />}
+                      label={status}
+                    />
+                  ))}
                 </RadioGroup>
               </FormControl>
               <Box

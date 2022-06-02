@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import {
   Box,
   Button,
@@ -35,11 +36,10 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
-import { Header } from "../../components/Header";
-import { db } from "../../lib/firebase";
-import { dateFormat } from "../../components/DateFormat";
-import { useUser } from "../../lib/auth";
-import { useRouter } from "next/router";
+import { Header } from "components/Header";
+import { db } from "lib/firebase";
+import { dateFormat } from "utils/DateFormat";
+import { useUser } from "lib/auth";
 
 export default function Todos() {
   const router = useRouter();
@@ -54,7 +54,7 @@ export default function Todos() {
     router.replace("/");
   };
 
-  const searchTextChange = (event: any) => {
+  const searchTextChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value as string);
   };
   const searchStatusChange = (event: SelectChangeEvent) => {
@@ -63,11 +63,13 @@ export default function Todos() {
   const searchPriorityChange = (event: SelectChangeEvent) => {
     setSearchPriority(event.target.value as string);
   };
-  const searchTextClick = (event: any) => {
+  const searchTextClick = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>
+  ) => {
     event.preventDefault();
     setSearchTask(searchText);
   };
-  const resetClick = (event: any) => {
+  const resetClick = () => {
     setSearchTask("");
     setSearchText("");
     setSearchStatus("NONE");
@@ -108,7 +110,7 @@ export default function Todos() {
     const todoId = e.target.parentNode.parentNode.id;
     deleteDoc(doc(db, "todos", todoId));
   };
-  const changeStatus = (e: any) => {
+  const changeStatus = (e: SelectChangeEvent) => {
     const status = e.target.value;
     let todoId = "";
     if (status.match("NOT STARTED")) {

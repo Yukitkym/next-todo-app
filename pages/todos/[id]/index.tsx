@@ -17,9 +17,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import Container from "@mui/material/Container";
 import { doc, getDoc } from "firebase/firestore";
 
-import { Header } from "../../../components/Header";
-import { db } from "../../../lib/firebase";
-import { dateFormat } from "../../../components/DateFormat";
+import { Header } from "components/Header";
+import { db } from "lib/firebase";
+import { dateFormat } from "utils/DateFormat";
 
 export default function TodoIndex() {
   const router = useRouter();
@@ -38,7 +38,7 @@ export default function TodoIndex() {
     if (router.isReady) {
       const accessDb = async () => {
         try {
-          const docRef = await doc(db, "todos", taskId);
+          const docRef = doc(db, "todos", taskId);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             setTask(docSnap.get("task"));

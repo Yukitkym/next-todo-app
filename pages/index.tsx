@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 
-import { useUser, login, logout } from "../lib/auth";
-import { Header } from "../components/Header";
+import { useUser, login, logout } from "lib/auth";
+import { Header } from "components/Header";
 
 const Home: NextPage = () => {
   const user = useUser();
